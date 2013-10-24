@@ -1195,6 +1195,14 @@
 		getDaysInMonth: function (year, month) {
 			return [31, (DPGlobal.isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 		},
+                addCentury: function(year, first_allowable_year) {
+                        century = Math.floor(first_allowable_year / 100) * 100;
+                        year = year + century;
+                        while (year < first_allowable_year) {
+                            year += 100;
+                        }
+                        return year
+                },
 		validParts: /dd?|DD?|mm?|MM?|yy(?:yy)?/g,
 		nonpunctuation: /[^ -\/:-@\[\u3400-\u9fff-`{-~\t\n\r]+/g,
 		parseFormat: function(format){
@@ -1241,8 +1249,8 @@
 				parsed = {},
 				setters_order = ['yyyy', 'yy', 'M', 'MM', 'm', 'mm', 'd', 'dd'],
 				setters_map = {
-					yyyy: function(d,v){ return d.setUTCFullYear(v); },
-					yy: function(d,v){ return d.setUTCFullYear(2000+v); },
+					yyyy: function(d,v){ return d.setUTCFullYear(v>100? v : DPGlobal.addCentury(v,date.getFullYear() - 100)); },
+					yy: function(d,v){ return d.setUTCFullYear(DPGlobal.addCentury(v,date.getFullYear() - 100)); },
 					m: function(d,v){
 						if (isNaN(d))
 							return d;
